@@ -10,6 +10,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "init": "node index.js -init",
+    "migrate": "node src/migrate.js",
     "build": "echo 'No build step required'"
   },
   "engines": {
