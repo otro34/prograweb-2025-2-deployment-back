@@ -1,28 +1,25 @@
 import Sequelize from 'sequelize'
 import pg from 'pg'
 
-//Variables
-/*
-const hostname = 'localhost';
-const username = 'postgres';
-const password = 'pg4dm1n$';
-const database = 'tiendadb';
-const port = '5432';
-const dialect = 'postgres';
-*/
+// Si existe DATABASE_URL (ej. Neon/Vercel) se usa ese connection string con SSL;
+// si no, se conecta al Postgres local de desarrollo.
 
-const hostname = process.env.DB_HOST || 'prograweb-bd-jcromaina-2025-1.postgres.database.azure.com';
-const username = process.env.DB_USERNAME || 'postgres';
-const password = process.env.DB_PASSWORD || 'Password!';
-const database = process.env.DB_NAME || 'tiendadb';
-const port = process.env.DB_PORT || 5432;
-const dialect = 'postgres'
+const url = process.env.DATABASE_URL || ''
 
-const sequelize = new Sequelize(database, username, password, {
-    host: hostname,
-    port: port,
-    dialect: dialect,
-    dialectModule: pg
-})
+const sequelize = url
+    ? new Sequelize(url, {
+        dialect: 'postgres',
+        dialectModule: pg,
+        dialectOptions: {
+            ssl: { require: true, rejectUnauthorized: false }
+        },
+        pool: { max: 2 }
+    })
+    : new Sequelize('tiendadb', 'postgres', '1234', {
+        host: 'localhost',
+        port: 5432,
+        dialect: 'postgres',
+        dialectModule: pg
+    });
 
 export default sequelize;
